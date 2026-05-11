@@ -1,0 +1,227 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "process",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6c84c32f-b68f-4915-97eb-9876579fbee4",
+      "name": "Webhook",
+      "webhookId": "8ab37cce-19b9-4881-bf18-9c185c88f7c8"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wx8LMTAX6gNK8blTRGbAnydw3Z5K-6exm04sNnVVEPA",
+          "mode": "list",
+          "cachedResultName": "AI Text Generation Test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wx8LMTAX6gNK8blTRGbAnydw3Z5K-6exm04sNnVVEPA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wx8LMTAX6gNK8blTRGbAnydw3Z5K-6exm04sNnVVEPA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{$json.content.parts[0].text.parseJson().email}}",
+            "Text": "={{$json.content.parts[0].text.parseJson().text}}",
+            "Summary": "={{$json.content.parts[0].text.parseJson().summary}}",
+            "Session_Id": "={{$json.content.parts[0].text.parseJson().session_id}}",
+            "Key_Points": "={{$json.content.parts[0].text.parseJson().key_points.join('\\n')}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Session_Id",
+              "displayName": "Session_Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Text",
+              "displayName": "Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Key_Points",
+              "displayName": "Key_Points",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        512,
+        0
+      ],
+      "id": "f31b32a3-bf1d-4115-b981-20430f266b47",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nACoiIh6z52dCGyV",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an assistant.\n\nRead this text:\n{{$json.body.text}}\n\nReturn ONLY JSON:\n\n{\n  \"email\": \"{{ $json.body.email }}\",\n  \"session_id\": \"{{ $json.body.session_id }}\",\n  \"text\": \"{{ $json.body.text }}\",\n  \"summary\": \"write short 2-3 line summary\",\n  \"key_points\": [\"point 1\", \"point 2\", \"point 3\"]\n}",
+              "role": "model"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8e846984-110f-416e-90c0-6543bd7ffd48",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.Email}}",
+        "subject": "This is a AI generated Mail",
+        "message": "=<p>Dear Sir,</p>\n\n<p>Your data has been processed successfully.</p>\n\n<h3>Summary:</h3>\n<p>{{$json.Summary}}</p>\n\n<h3>Key Points:</h3>\n<ol>\n{{\n  $json.Key_Points\n    .split('\\n')\n    .map(point => `<li>${point}</li>`)\n    .join('')\n}}\n</ol>\n\n<p>Thank you.</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        0
+      ],
+      "id": "e16a0db6-98ca-4372-91e6-4890dfde0021",
+      "name": "Send a message",
+      "webhookId": "ce242c95-a813-4b46-a7fc-7ab7b53680f8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "t9BOWIGraJTpV9Cc",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2f37e13f-1948-4575-acf5-d88d0a851656",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "39445885e435b6b79b7f3e5738b2a35ef1401fbbe6691c6d762098d062e3e26e"
+  },
+  "id": "B9yV2ZzzOQEftqiU",
+  "tags": []
+}
