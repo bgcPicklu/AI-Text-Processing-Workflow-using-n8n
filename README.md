@@ -9,6 +9,7 @@ A simple AI workflow application using:
 The app collects user input from Streamlit, sends it to a FastAPI backend, and then triggers an n8n webhook workflow.
 
 #### **Project Structure**
+```
 project-folder/
 │
 ├── app.py               # Streamlit frontend
@@ -16,6 +17,7 @@ project-folder/
 ├── .env                 # Environment variables
 ├── requirements.txt
 └── README.md
+```
 
 #### **Features**
 * User-friendly Streamlit interface
