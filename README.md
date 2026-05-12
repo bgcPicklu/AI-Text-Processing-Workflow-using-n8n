@@ -13,10 +13,10 @@ The app collects user input from Streamlit, sends it to a FastAPI backend, and t
 project-folder/
 │
 ├── backend
-|     ├── main.py              # FastAPI backend
-|     ├── .env                 # Environment variables
+|     ├── .env              # FastAPI backend
+|     └── main.py           # Environment variables
 ├── frontend
-|     ├── app.py               # Streamlit frontend
+|     └── app.py            # Streamlit frontend
 ├── demo-video-link.txt
 ├── LICENSE
 ├── README.md
